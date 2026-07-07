@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
-"""Gera as figuras do paper a partir dos resultados reais (conformidade + juiz).
+"""Generate the paper figures from the real results (conformity + judge).
 
-Saidas em paper/figures/*.pdf (vetorial, para o LaTeX) e *.png (visualizacao rapida).
-100% a partir de resultados/tabelas_*.json e resultados/juizo_*.json.
+Writes figures/*.pdf (vector, for LaTeX) and *.png (quick preview), built entirely
+from resultados/tabelas_*.json and resultados/juizo_*.json.
 """
 import json
 import collections
@@ -16,10 +16,10 @@ from matplotlib.patches import Patch
 
 HERE = Path(__file__).resolve().parent
 RES = HERE / "resultados"
-OUT = HERE.parent / "paper" / "figures"
+OUT = HERE / "figures"
 OUT.mkdir(parents=True, exist_ok=True)
 
-# ---- estilo academico, consistente entre figuras ----
+# ---- academic style, consistent across figures ----
 plt.rcParams.update({
     "font.family": "serif",
     "font.size": 10,
@@ -30,7 +30,7 @@ plt.rcParams.update({
     "figure.dpi": 150,
     "savefig.bbox": "tight",
 })
-# Okabe-Ito (colorblind-safe). Semantica: native=fragil, fewshot=imitativo, grammar=garantia.
+# Okabe-Ito (colorblind-safe). Semantics: native=fragile, fewshot=imitative, grammar=guarantee.
 COL = {"native": "#D55E00", "fewshot": "#0072B2", "grammar": "#009E73"}
 LAB = {"native": "native", "fewshot": "few-shot", "grammar": "grammar"}
 STRATS = ["native", "fewshot", "grammar"]
@@ -66,7 +66,7 @@ def savefig(fig, name):
     print(f"  ok: {name}.pdf / .png")
 
 
-# ============ FIG 1 — RQ1: conformidade em K3 (a manchete) ============
+# ============ FIG 1 -- RQ1: conformity at K3 (the headline) ============
 def fig1():
     fig, axes = plt.subplots(1, 2, figsize=(9, 3.6), sharey=True)
     for ax, (dom, titulo) in zip(axes, DOMS):
@@ -93,7 +93,7 @@ def fig1():
     savefig(fig, "fig1_conformity_k3")
 
 
-# ============ FIG 2 — RQ1: superficie completa (heatmap) ============
+# ============ FIG 2 -- RQ1: full surface (heatmap) ============
 def fig2():
     contratos = ["K1", "K2", "K3"]
     cols = [(k, s) for k in contratos for s in STRATS]  # 9 colunas
@@ -112,7 +112,7 @@ def fig2():
         ax.set_xticklabels([LAB[s] for _, s in cols], rotation=90, fontsize=7)
         ax.set_yticks(range(len(CORE)))
         ax.set_yticklabels([m.replace(":", "\n") for m in CORE], fontsize=7)
-        # separadores de contrato
+        # contract separators
         for xline in (2.5, 5.5):
             ax.axvline(xline, color="white", lw=2)
         for j, k in enumerate(contratos):
@@ -130,7 +130,7 @@ def fig2():
     savefig(fig, "fig2_conformity_heatmap")
 
 
-# ============ FIG 3 — RQ2: custo de qualidade (juiz cego) ============
+# ============ FIG 3 -- RQ2: quality cost (blind judge) ============
 def fig3():
     fig, axes = plt.subplots(1, 2, figsize=(9, 3.8), sharey=True)
     for ax, (dom, titulo) in zip(axes, DOMS):
@@ -141,7 +141,7 @@ def fig3():
                         patch_artist=True, showfliers=False, medianprops=dict(color="black", lw=1))
         for patch, s in zip(bp["boxes"], STRATS):
             patch.set_facecolor(COL[s]); patch.set_alpha(0.55); patch.set_edgecolor(COL[s])
-        # media (marcador) + jitter dos pontos
+        # mean (marker) + point jitter
         rng = np.random.default_rng(42)
         for p, s in zip(positions, STRATS):
             v = np.array(data[s])
@@ -160,11 +160,11 @@ def fig3():
     savefig(fig, "fig3_quality_rq2")
 
 
-# ============ FIG 4 — RQ3: custo computacional ============
+# ============ FIG 4 -- RQ3: compute cost ============
 def fig4():
     fig, axes = plt.subplots(1, 2, figsize=(9.5, 3.6))
 
-    # (a) latencia por estrategia em K3, educacao (destaca o pico do phi3 native)
+    # (a) latency by strategy at K3, education (highlights the phi3 native spike)
     ax = axes[0]
     tab, _ = load("educacao")
     x = np.arange(len(CORE)); w = 0.26

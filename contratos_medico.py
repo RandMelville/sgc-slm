@@ -1,17 +1,18 @@
-"""Instância MÉDICA dos contratos (2º domínio do estudo).
+"""Clinical instance of the contracts (second domain of the study).
 
-Mesma estrutura de `contratos.py` (educação): três contratos de complexidade
-crescente (K1 plano → K2 aninhado → K3 enums + lista tipada), com system prompt,
-JSON Schema, exemplo few-shot e validador determinístico por contrato.
+Same structure as `contratos.py` (education): three contracts of increasing complexity
+(K1 flat -> K2 nested -> K3 enums + typed list), each with a system prompt, JSON Schema,
+few-shot exemplar, and deterministic per-contract validator.
 
-Tarefa: APOIO à triagem clínica a partir de uma nota clínica curta e SINTÉTICA. O
-modelo sinaliza achados e levanta perguntas ao profissional — não diagnostica nem
-prescreve. Esse enquadramento "de apoio, não decisor" é deliberado: instancia a mesma
-tese (IA verificável, com humano no loop) num domínio de alto risco distinto.
+Task: clinical-triage SUPPORT from a short, SYNTHETIC clinical note. The model flags
+findings and raises questions for the professional; it does not diagnose or prescribe.
+This "support, not decision-maker" framing is deliberate: it instantiates verifiable,
+human-in-the-loop AI in a distinct high-risk domain.
 
-IMPORTANTE: todos os cenários são fictícios/sintéticos; nenhum dado pessoal real é
-processado (LGPD art. 5º I). Não é aconselhamento médico — o objeto é conformidade
-estrutural de saída, não triagem real.
+IMPORTANT: all scenarios are fictitious/synthetic; no real personal data is processed
+(LGPD art. 5, I). This is not medical advice; the object of study is structural output
+conformity, not real triage. Prompts and scenarios are kept in Brazilian Portuguese as
+the experimental stimuli.
 """
 
 BASE_INSTRUCAO = """Você é um assistente de APOIO à triagem clínica. A partir de uma nota clínica curta, você sinaliza achados objetivos e levanta perguntas para o profissional de saúde decidir. Você opera como apoio, nunca como decisor.
@@ -35,7 +36,7 @@ def _lista_de_str(x):
     return isinstance(x, list) and len(x) > 0 and all(_str_ok(i) for i in x)
 
 
-# --- K1: plano (str + lista de str) ---------------------------------------
+# --- K1: flat (str + list of str) -----------------------------------------
 K1_FORMATO = """
 FORMATO (JSON estrito, sem texto fora):
 {
@@ -70,7 +71,7 @@ def k1_validate(p):
     return True, "OK"
 
 
-# --- K2: aninhado ----------------------------------------------------------
+# --- K2: nested ------------------------------------------------------------
 K2_FORMATO = """
 FORMATO (JSON estrito, sem texto fora):
 {
@@ -121,7 +122,7 @@ def k2_validate(p):
     return True, "OK"
 
 
-# --- K3: enums + lista de objetos tipados ---------------------------------
+# --- K3: enums + list of typed objects ------------------------------------
 K3_URGENCIA = ["baixo", "medio", "alto"]
 K3_SISTEMAS = ["cardio", "respiratorio", "neuro", "metabolico", "outro"]
 

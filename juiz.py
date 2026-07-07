@@ -1,33 +1,30 @@
-"""Juiz LLM (G-Eval pointwise) para BLINDAR o RQ2 — custo de qualidade.
+"""LLM judge (G-Eval pointwise) to HARDEN RQ2 -- the quality cost.
 
-Substitui os proxies léxicos (limite inferior por substring, saturados no
-domínio médico) por um julgamento rubricado de um LLM-as-judge (Claude). A
-avaliação é:
-  - POINTWISE (nota 1–5 por resposta) → elimina viés de posição;
-  - CEGA à estratégia que gerou a resposta (native/fewshot/grammar) → o juiz
-    não sabe qual condição produziu o texto;
-  - com CADEIA DE RACIOCÍNIO explícita antes da nota (G-Eval; Liu et al. 2023);
-  - por um modelo DIFERENTE dos avaliados (SLMs ≤4B) → sem auto-preferência.
+Replaces the lexical proxies (lower-bound substring matching, saturated in the
+clinical domain) with a rubric-based LLM-as-judge (Claude). The evaluation is:
+  - POINTWISE (score 1-5 per response) -> removes position bias;
+  - BLIND to the strategy that produced the response (native/fewshot/grammar) ->
+    the judge does not know which condition produced the text;
+  - with an explicit CHAIN OF REASONING before the score (G-Eval; Liu et al. 2023);
+  - by a model DIFFERENT from those evaluated (SLMs <=4B) -> no self-preference.
 
-Fundamentação de validade (a citar no artigo): juízes fortes concordam ~80% com
-anotadores humanos (Zheng et al. 2023, MT-Bench/Chatbot Arena) — nível de
-concordância comparável ao inter-humano; G-Eval (Liu et al. 2023) formaliza a
-rubrica + CoT pointwise; vieses conhecidos e mitigações em Zheng et al. 2023 e
-Wang et al. 2023.
+Validity basis (cited in the paper): strong judges agree ~80% with human annotators
+(Zheng et al. 2023, MT-Bench/Chatbot Arena) -- agreement comparable to inter-human;
+G-Eval (Liu et al. 2023) formalizes the rubric + pointwise CoT; known biases and
+mitigations in Zheng et al. 2023 and Wang et al. 2023.
 
-IMPORTANTE — o juiz é um INSTRUMENTO DE MEDIÇÃO OFFLINE, não parte do sistema
-implantado. Os SLMs avaliados permanecem 100% locais; usar Claude como juiz é
-análogo ao uso consolidado de GPT-4-as-judge em PLN e não altera a alegação de
-"deployment local, sem API paga" (essa alega sobre o sistema estudado, não sobre
-o aparato de avaliação).
+IMPORTANT: the judge is an OFFLINE MEASURING INSTRUMENT, not part of the deployed
+system. The evaluated SLMs remain 100% local; using Claude as a judge is analogous to
+the established use of GPT-4-as-judge in NLP and does not affect the "local deployment,
+no paid API" claim (which is about the system under study, not the evaluation apparatus).
 
-Requer:  pip install anthropic scipy   e   export ANTHROPIC_API_KEY=...
-Uso:
+Requires:  pip install anthropic scipy   and   export ANTHROPIC_API_KEY=...
+Usage:
     python3 juiz.py --dominio educacao
     python3 juiz.py --dominio medico
-Resumível e à prova de falha: grava juizo_<dominio>.json após cada julgamento e
-pula os já feitos. Ao final, agrega grammar-vs-native (Mann-Whitney U) e grava
-tabelas_juiz_<dominio>.json. Custo aproximado impresso ao iniciar.
+Resumable and crash-safe: writes juizo_<dominio>.json after each judgment and skips
+those already done. At the end, aggregates grammar-vs-native (Mann-Whitney U) and writes
+tabelas_juiz_<dominio>.json. Approximate cost printed at startup.
 """
 import argparse
 import json
@@ -167,7 +164,7 @@ def agregar(juizos):
             n_few, med_few = stat(few)
             p = None
             if len(nat) >= 3 and len(gram) >= 3:
-                # bilateral: detecta degradação OU melhora de qualidade sob grammar
+                # two-sided: detects degradation OR improvement of quality under grammar
                 _, p = mannwhitneyu(gram, nat, alternative="two-sided")
             pstr = f"p={p:.3f}" if p is not None else "— (n baixo)"
             print(f"{m:<22} {k:<3} {n_nat:>4}/{str(med_nat):>6} "
@@ -181,7 +178,7 @@ def agregar(juizos):
             })
         print("-" * 88)
 
-    # visão agregada (pooled) por condição
+    # aggregated (pooled) view per condition
     pooled = defaultdict(list)
     for j in juizos:
         pooled[j["condicao"]].append(j["nota"])

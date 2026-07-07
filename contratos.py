@@ -1,23 +1,22 @@
-"""Três contratos de saída estruturada, de complexidade crescente.
+"""Three structured-output contracts of increasing complexity (EDUCATION domain).
 
-Objeto do experimento: comparar três caminhos para a conformidade estrutural
-de um SLM — nativo (JSON-mode), few-shot (1 exemplo tipado) e grammar/schema-
-constrained — medindo conformidade, qualidade de conteúdo e custo computacional.
+The experiment compares three paths to structural conformity for an SLM: native
+(JSON-mode), few-shot (one typed exemplar), and grammar/schema-constrained, while
+measuring conformity, content quality, and compute cost.
 
-Cada contrato traz:
-  - system_prompt : a instrução (usada nas condições native e fewshot)
-  - schema        : JSON Schema para o `format` do Ollama (condição grammar)
-  - fewshot_user  : texto-demo do aluno (fora do conjunto de teste)
-  - fewshot_gold  : resposta-ouro conforme o contrato (demo few-shot)
-  - validate(p)   : (bool, motivo) — conformidade estrutural determinística
+Each contract provides:
+  - system_prompt : the instruction (used in the native and few-shot conditions)
+  - schema        : JSON Schema for Ollama's `format` (grammar condition)
+  - fewshot_user  : demo student text (outside the test set)
+  - fewshot_gold  : gold response conforming to the contract (few-shot demo)
+  - validate(p)   : (bool, reason) -- deterministic structural conformity
 
-Reaproveita a instrução pedagógica e o construto de conformidade do benchmark
-do doutorado (slm-writing-feedback-tutor-ptbr): validador de tipos herdado de
-`diagnosticar()`/`divergent()`. O ponto do paper é que JSON-mode valida SINTAXE,
-não TIPOS — daí o gradiente K1->K3 e o braço grammar.
+JSON-mode validates SYNTAX, not TYPES; hence the K1->K3 gradient and the grammar arm.
+Prompts, scenarios, and gold responses are kept in Brazilian Portuguese: they are the
+experimental stimuli for a Brazilian basic-education domain and must not be translated.
 """
 
-# Instrução pedagógica compartilhada (destilada do SYSTEM_PROMPT canônico do Bento).
+# Shared pedagogical instruction (system prompt; the tutor persona is named "Bento").
 BASE_INSTRUCAO = """Você é o Bento, um tutor de Linguística Textual (Koch) para alunos do 8º-9º ano da escola pública brasileira. Você opera após o aluno escrever um texto curto.
 
 REGRAS:
@@ -27,8 +26,8 @@ REGRAS:
 4. Valorize variedades linguísticas e oralidade; não aja como policial gramatical.
 5. Quando couber, faça uma ponte com o Pensamento Computacional (lógica, sequência, condição)."""
 
-# Texto-demo (few-shot). NÃO pertence ao conjunto de teste — assim as 8 cenas de
-# avaliação são julgadas igualmente sob as 3 condições.
+# Few-shot demo text. NOT part of the test set, so the 8 evaluation scenarios are
+# judged equally under all 3 conditions.
 DEMO_USER = ("Minha redação sobre as férias: Eu fui na praia. Eu joguei bola. "
              "Eu comi sorvete. Eu nadei no mar. Foi muito bom as férias.")
 
@@ -42,8 +41,8 @@ def _lista_de_str(x):
 
 
 # ---------------------------------------------------------------------------
-# K1 — contrato plano (str + lista de str). É exatamente a forma em que a
-# família Llama 3.2 quebrou no benchmark (emitiu pontos_fortes como lista).
+# K1 -- flat contract (str + list of str). This is exactly the shape where the
+# Llama 3.2 family broke in a prior benchmark (emitting pontos_fortes as a list).
 # ---------------------------------------------------------------------------
 K1_FORMATO = """
 FORMATO (JSON estrito, sem texto fora):
@@ -80,7 +79,7 @@ def k1_validate(p):
 
 
 # ---------------------------------------------------------------------------
-# K2 — contrato aninhado (objeto dentro de objeto).
+# K2 -- nested contract (object within object).
 # ---------------------------------------------------------------------------
 K2_FORMATO = """
 FORMATO (JSON estrito, sem texto fora):
@@ -133,7 +132,7 @@ def k2_validate(p):
 
 
 # ---------------------------------------------------------------------------
-# K3 — contrato com enums + lista de objetos tipados.
+# K3 -- enums + list of typed objects.
 # ---------------------------------------------------------------------------
 K3_NIVEIS = ["inicial", "intermediario", "avancado"]
 K3_TIPOS = ["coesao", "coerencia", "pc"]
@@ -201,19 +200,19 @@ def k3_validate(p):
 
 CONTRATOS = {
     "K1": {
-        "id": "K1", "descricao": "plano (str + lista de str)",
+        "id": "K1", "descricao": "flat (str + list of str)",
         "system_prompt": BASE_INSTRUCAO + "\n" + K1_FORMATO,
         "schema": K1_SCHEMA, "fewshot_user": DEMO_USER, "fewshot_gold": K1_GOLD,
         "validate": k1_validate,
     },
     "K2": {
-        "id": "K2", "descricao": "aninhado (objeto dentro de objeto)",
+        "id": "K2", "descricao": "nested (object within object)",
         "system_prompt": BASE_INSTRUCAO + "\n" + K2_FORMATO,
         "schema": K2_SCHEMA, "fewshot_user": DEMO_USER, "fewshot_gold": K2_GOLD,
         "validate": k2_validate,
     },
     "K3": {
-        "id": "K3", "descricao": "enums + lista de objetos tipados",
+        "id": "K3", "descricao": "enums + list of typed objects",
         "system_prompt": BASE_INSTRUCAO + "\n" + K3_FORMATO,
         "schema": K3_SCHEMA, "fewshot_user": DEMO_USER, "fewshot_gold": K3_GOLD,
         "validate": k3_validate,

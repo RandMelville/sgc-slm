@@ -1,24 +1,24 @@
-"""Harness do experimento de conformidade estrutural em SLMs.
+"""Experiment harness for structural conformity in SLMs.
 
-Matriz fatorial: modelos x condicoes x contratos x cenarios x reps(seed).
-Coleta contra Ollama local (http://localhost:11434). Salva de forma incremental
-e RETOMÁVEL: se o arquivo de saída já existe, chamadas já feitas são puladas.
+Factorial matrix: models x conditions x contracts x scenarios x reps(seed).
+Collects against local Ollama (http://localhost:11434). Saves incrementally and is
+RESUMABLE: if the output file already exists, calls already made are skipped.
 
-MULTI-DOMÍNIO: o mesmo harness roda em domínios diferentes via --dominio, trocando
-apenas os contratos e os cenários. As estratégias, modelos, seeds e estatística são
-idênticos entre domínios (é isso que torna o protocolo comparável e reutilizável).
+MULTI-DOMAIN: the same harness runs on different domains via --dominio, swapping only
+the contracts and scenarios. Strategies, models, seeds, and statistics are identical
+across domains (this is what makes the protocol comparable and reusable).
 
-Condições (3 caminhos para conformidade):
-  native  -> format="json" (JSON-mode: valida sintaxe, não tipos) — a linha de base.
-  fewshot -> format="json" + 1 exemplo tipado no histórico.
-  grammar -> format=<JSON Schema tipado> (structured outputs do Ollama >= 0.5).
+Conditions (3 paths to conformity):
+  native  -> format="json" (JSON-mode: validates syntax, not types) -- the baseline.
+  fewshot -> format="json" + 1 typed exemplar in the history.
+  grammar -> format=<typed JSON Schema> (Ollama structured outputs, >= 0.5).
 
-Determinismo: temperature fixa + options.seed por rep (42/43/44).
+Determinism: fixed temperature + options.seed per rep (42/43/44).
 
-Uso típico:
-    python3 harness.py --dry-run                 # educação (padrão), mostra a matriz
-    python3 harness.py                           # roda educação (retomável)
-    python3 harness.py --dominio medico          # roda a instância médica
+Typical usage:
+    python3 harness.py --dry-run                 # education (default), shows the matrix
+    python3 harness.py                           # runs education (resumable)
+    python3 harness.py --dominio medico          # runs the clinical instance
     python3 harness.py --dominio medico --models qwen2.5:3b-instruct --contratos K1
 """
 import argparse
@@ -34,16 +34,16 @@ HERE = Path(__file__).resolve().parent
 sys.path.insert(0, str(HERE))
 OLLAMA = "http://localhost:11434/api/chat"
 
-# 5 modelos-núcleo (todos instruct/diretos, comparáveis). O qwen3:4b "thinking" NÃO
-# entra no núcleo (é ~30x mais lento por raciocinar); ele é rodado à parte como uma
-# sonda controlada de "reasoning tax" (ver README), já coletada em educação.
+# 5 core models (all instruct/direct, comparable). The qwen3:4b "thinking" variant is
+# NOT part of the core (it is ~30x slower because it reasons); it is run separately as a
+# controlled "reasoning tax" probe (see README), already collected for education.
 MODELOS = ["llama3.2:3b", "qwen2.5:3b-instruct", "gemma2:2b", "phi3:mini", "qwen3:4b-instruct"]
 CONDICOES = ["native", "fewshot", "grammar"]
-SEEDS = [42, 43, 44]  # 3 reps reprodutíveis
+SEEDS = [42, 43, 44]  # 3 reproducible reps
 TEMPERATURE = 0.2
 
-# Instâncias de domínio: (módulo de contratos, cenários, saída padrão).
-# Educação mantém os caminhos originais para não quebrar rodadas em andamento.
+# Domain instances: (contracts module, scenarios, default output path).
+# Education keeps the original paths so as not to break runs in progress.
 DOMINIOS = {
     "educacao": {"contratos": "contratos", "cenarios": "cenarios.jsonl",
                  "out": "resultados/conformidade.json"},
@@ -164,7 +164,7 @@ def main():
                             reg["erro"] = str(e)
                         resultados.append(reg)
                         feito_nesta_run += 1
-                        # persistência incremental a cada chamada (crash-safe)
+                        # incremental persistence on each call (crash-safe)
                         out_path.write_text(
                             json.dumps(resultados, ensure_ascii=False, indent=2),
                             encoding="utf-8")

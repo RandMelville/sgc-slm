@@ -1,22 +1,22 @@
-"""Análise do experimento de conformidade estrutural em SLMs (multi-domínio).
+"""Analysis of the SLM structural-conformity experiment (multi-domain).
 
-Lê resultados/conformidade[_dominio].json e responde às três perguntas:
-  RQ1 — conformidade por modelo x condicao x contrato (taxa + IC de Wilson);
-        Fisher exato native-vs-grammar e native-vs-fewshot.
-  RQ2 — custo de qualidade: entre as respostas CONFORMES, a condição grammar
-        degrada o conteúdo (aderência ao léxico do domínio) vs native?
-  RQ3 — custo computacional: latência e tokens de saída por condição.
+Reads resultados/conformidade[_domain].json and answers the three questions:
+  RQ1 -- conformity by model x condition x contract (rate + Wilson CI);
+         Fisher's exact native-vs-grammar and native-vs-few-shot.
+  RQ2 -- quality cost: among CONFORMANT responses, does the grammar condition
+         degrade content (domain-lexicon adherence) vs native?
+  RQ3 -- compute cost: latency and output tokens per condition.
 
-Léxico de qualidade por domínio: educação = taxonomia de Koch (coesão/coerência);
-médico = terminologia clínica objetiva. Ambos são PROXIES de limite inferior por
-substring (não medem adequação, só presença) — validação humana (κ) é trabalho futuro.
+Per-domain quality lexicon: education = Koch cohesion/coherence taxonomy;
+clinical = objective clinical terminology. Both are LOWER-BOUND substring proxies
+(they measure presence, not adequacy); human (kappa) validation is future work.
 
-Estatística (Fisher exato, IC de Wilson) reaproveitada do benchmark do doutorado.
-Timeouts contam como não-conformes (conservador). Guard de RQ2: o n-conforme por
-célula é reportado, e comparações de qualidade não devem ser lidas onde native≈0.
+Fisher's exact and Wilson CI follow a prior SLM writing-feedback benchmark. Timeouts
+count as non-conformant (conservative). RQ2 guard: the per-cell conformant n is
+reported, and quality comparisons must not be read where native is near zero.
 
-Uso:
-    python3 analise.py                    # educação (padrão)
+Usage:
+    python3 analise.py                    # education (default)
     python3 analise.py --dominio medico
 """
 import argparse
@@ -30,14 +30,14 @@ from scipy.stats import fisher_exact
 
 HERE = Path(__file__).resolve().parent
 
-# --- Proxies de qualidade por domínio (stems normalizados, casamento por substring).
+# --- Per-domain quality proxies (normalized stems, substring matching).
 LEXICOS = {
-    "educacao": {  # taxonomia de coesão/coerência de Koch (fiel ao scorer do doutorado)
+    "educacao": {  # Koch cohesion/coherence taxonomy
         "coes", "conect", "conjun", "pronom", "referenc", "retomad", "sequenci",
         "ambigu", "repet", "sinon", "elipse", "elipt", "argument", "marcador",
         "temporal", "justapos",
     },
-    "medico": {  # terminologia clínica objetiva (achados/sinais/sistemas)
+    "medico": {  # objective clinical terminology (findings/signs/systems)
         "sintom", "sinal", "satura", "press", "frequenc", "febr", "dor", "dispne",
         "edem", "glic", "cardio", "respirat", "neuro", "metaboli", "hipertens",
         "taquic", "cefale", "confus", "urgenc", "triag", "comorbid", "auscult",
@@ -121,8 +121,8 @@ def main():
     out = Path(args.out or str(HERE / "resultados" / f"tabelas_{args.dominio}.json"))
 
     registros = json.loads(inp.read_text(encoding="utf-8"))
-    # De-dup por chave: uma tentativa bem-sucedida sobrepõe uma repesca que deu erro,
-    # para que cada (modelo,condição,contrato,cenário,seed) conte exatamente uma vez.
+    # De-dup by key: a successful attempt overrides a re-fetch that errored,
+    # so each (model, condition, contract, scenario, seed) counts exactly once.
     best = {}
     for r in registros:
         k = (r["modelo"], r["condicao"], r["contrato"], r["cenario_id"], r["seed"])
