@@ -1,0 +1,30 @@
+cff-version: 1.2.0
+message: "If you use this software or data, please cite the paper below."
+title: "SGC-SLM: The Structural-Guarantee Cost of Small Language Models"
+abstract: >-
+  Reusable protocol and artifact measuring the cost of guaranteeing verifiable
+  structured output from locally-run Small Language Models across native,
+  few-shot, and grammar-constrained decoding, over a contract-complexity gradient
+  and two sovereign high-risk domains.
+type: software
+authors:
+  - family-names: "Rebouças"
+    given-names: "Randerson Oliveira Melville"
+    affiliation: "Programa de Pós-Graduação em Informática na Educação (PPGIE), Universidade Federal do Rio Grande do Sul (UFRGS)"
+    email: randerson.melville@ufrgs.br
+license: MIT
+repository-code: "https://github.com/RandMelville/sgc-slm"
+keywords:
+  - small language models
+  - structured output
+  - constrained decoding
+  - JSON schema
+  - reproducibility
+  - trustworthy AI
+preferred-citation:
+  type: article
+  title: "The Structural-Guarantee Cost of Small Language Models: A Reproducible Protocol for Verifiable Structured Output in Sovereign, High-Risk Domains"
+  authors:
+    - family-names: "Rebouças"
+      given-names: "Randerson Oliveira Melville"
+  year: 2026

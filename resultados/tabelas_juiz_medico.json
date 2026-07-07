@@ -1,0 +1,184 @@
+{
+  "por_celula": [
+    {
+      "modelo": "gemma2:2b",
+      "contrato": "K1",
+      "native_n": 24,
+      "native_media": 3.54,
+      "fewshot_n": 24,
+      "fewshot_media": 3.29,
+      "grammar_n": 24,
+      "grammar_media": 3.58,
+      "mannwhitney_grammar_vs_native_p": 0.7826139955479254
+    },
+    {
+      "modelo": "gemma2:2b",
+      "contrato": "K2",
+      "native_n": 24,
+      "native_media": 2.71,
+      "fewshot_n": 24,
+      "fewshot_media": 3.04,
+      "grammar_n": 24,
+      "grammar_media": 2.71,
+      "mannwhitney_grammar_vs_native_p": 1.0
+    },
+    {
+      "modelo": "gemma2:2b",
+      "contrato": "K3",
+      "native_n": 3,
+      "native_media": 3.0,
+      "fewshot_n": 2,
+      "fewshot_media": 3.5,
+      "grammar_n": 24,
+      "grammar_media": 3.21,
+      "mannwhitney_grammar_vs_native_p": 0.47950012218695337
+    },
+    {
+      "modelo": "llama3.2:3b",
+      "contrato": "K1",
+      "native_n": 24,
+      "native_media": 2.83,
+      "fewshot_n": 24,
+      "fewshot_media": 2.88,
+      "grammar_n": 24,
+      "grammar_media": 2.83,
+      "mannwhitney_grammar_vs_native_p": 1.0
+    },
+    {
+      "modelo": "llama3.2:3b",
+      "contrato": "K2",
+      "native_n": 24,
+      "native_media": 2.33,
+      "fewshot_n": 24,
+      "fewshot_media": 2.79,
+      "grammar_n": 24,
+      "grammar_media": 2.21,
+      "mannwhitney_grammar_vs_native_p": 0.40217932223370845
+    },
+    {
+      "modelo": "llama3.2:3b",
+      "contrato": "K3",
+      "native_n": 8,
+      "native_media": 3.62,
+      "fewshot_n": 10,
+      "fewshot_media": 3.1,
+      "grammar_n": 24,
+      "grammar_media": 3.21,
+      "mannwhitney_grammar_vs_native_p": 0.057030805269399965
+    },
+    {
+      "modelo": "phi3:mini",
+      "contrato": "K1",
+      "native_n": 24,
+      "native_media": 3.21,
+      "fewshot_n": 24,
+      "fewshot_media": 2.67,
+      "grammar_n": 23,
+      "grammar_media": 3.3,
+      "mannwhitney_grammar_vs_native_p": 0.5899460908470422
+    },
+    {
+      "modelo": "phi3:mini",
+      "contrato": "K2",
+      "native_n": 22,
+      "native_media": 2.18,
+      "fewshot_n": 24,
+      "fewshot_media": 2.67,
+      "grammar_n": 24,
+      "grammar_media": 2.29,
+      "mannwhitney_grammar_vs_native_p": 0.5171340419570425
+    },
+    {
+      "modelo": "phi3:mini",
+      "contrato": "K3",
+      "native_n": 10,
+      "native_media": 2.6,
+      "fewshot_n": 14,
+      "fewshot_media": 3.5,
+      "grammar_n": 24,
+      "grammar_media": 2.75,
+      "mannwhitney_grammar_vs_native_p": 0.7990600045745007
+    },
+    {
+      "modelo": "qwen2.5:3b-instruct",
+      "contrato": "K1",
+      "native_n": 24,
+      "native_media": 3.08,
+      "fewshot_n": 24,
+      "fewshot_media": 2.96,
+      "grammar_n": 24,
+      "grammar_media": 3.04,
+      "mannwhitney_grammar_vs_native_p": 0.7599360216215746
+    },
+    {
+      "modelo": "qwen2.5:3b-instruct",
+      "contrato": "K2",
+      "native_n": 24,
+      "native_media": 2.33,
+      "fewshot_n": 24,
+      "fewshot_media": 2.54,
+      "grammar_n": 24,
+      "grammar_media": 2.46,
+      "mannwhitney_grammar_vs_native_p": 0.6267972000953269
+    },
+    {
+      "modelo": "qwen2.5:3b-instruct",
+      "contrato": "K3",
+      "native_n": 7,
+      "native_media": 2.43,
+      "fewshot_n": 11,
+      "fewshot_media": 2.91,
+      "grammar_n": 24,
+      "grammar_media": 2.08,
+      "mannwhitney_grammar_vs_native_p": 0.4024273790677487
+    },
+    {
+      "modelo": "qwen3:4b-instruct",
+      "contrato": "K1",
+      "native_n": 24,
+      "native_media": 4.33,
+      "fewshot_n": 24,
+      "fewshot_media": 3.88,
+      "grammar_n": 24,
+      "grammar_media": 4.29,
+      "mannwhitney_grammar_vs_native_p": 0.8692946326780614
+    },
+    {
+      "modelo": "qwen3:4b-instruct",
+      "contrato": "K2",
+      "native_n": 24,
+      "native_media": 3.92,
+      "fewshot_n": 24,
+      "fewshot_media": 3.33,
+      "grammar_n": 24,
+      "grammar_media": 3.83,
+      "mannwhitney_grammar_vs_native_p": 0.6228275177341801
+    },
+    {
+      "modelo": "qwen3:4b-instruct",
+      "contrato": "K3",
+      "native_n": 17,
+      "native_media": 3.53,
+      "fewshot_n": 18,
+      "fewshot_media": 3.72,
+      "grammar_n": 24,
+      "grammar_media": 3.33,
+      "mannwhitney_grammar_vs_native_p": 0.44157425558520524
+    }
+  ],
+  "agregado_por_condicao": {
+    "native": {
+      "n": 283,
+      "media": 3.067
+    },
+    "fewshot": {
+      "n": 295,
+      "media": 3.075
+    },
+    "grammar": {
+      "n": 359,
+      "media": 3.008
+    }
+  },
+  "modelo_juiz": "claude-opus-4-8"
+}
