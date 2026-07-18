@@ -10,7 +10,7 @@
       "taxa_pct": 100.0,
       "wilson_lo": 86.2,
       "wilson_hi": 100.0,
-      "fisher_vs_native": "(referência)",
+      "fisher_vs_native": "(reference)",
       "p": null
     },
     {
@@ -46,7 +46,7 @@
       "taxa_pct": 100.0,
       "wilson_lo": 86.2,
       "wilson_hi": 100.0,
-      "fisher_vs_native": "(referência)",
+      "fisher_vs_native": "(reference)",
       "p": null
     },
     {
@@ -82,7 +82,7 @@
       "taxa_pct": 12.5,
       "wilson_lo": 4.3,
       "wilson_hi": 31.0,
-      "fisher_vs_native": "(referência)",
+      "fisher_vs_native": "(reference)",
       "p": null
     },
     {
@@ -118,7 +118,7 @@
       "taxa_pct": 100.0,
       "wilson_lo": 86.2,
       "wilson_hi": 100.0,
-      "fisher_vs_native": "(referência)",
+      "fisher_vs_native": "(reference)",
       "p": null
     },
     {
@@ -154,7 +154,7 @@
       "taxa_pct": 100.0,
       "wilson_lo": 86.2,
       "wilson_hi": 100.0,
-      "fisher_vs_native": "(referência)",
+      "fisher_vs_native": "(reference)",
       "p": null
     },
     {
@@ -190,7 +190,7 @@
       "taxa_pct": 33.3,
       "wilson_lo": 18.0,
       "wilson_hi": 53.3,
-      "fisher_vs_native": "(referência)",
+      "fisher_vs_native": "(reference)",
       "p": null
     },
     {
@@ -226,7 +226,7 @@
       "taxa_pct": 100.0,
       "wilson_lo": 86.2,
       "wilson_hi": 100.0,
-      "fisher_vs_native": "(referência)",
+      "fisher_vs_native": "(reference)",
       "p": null
     },
     {
@@ -262,7 +262,7 @@
       "taxa_pct": 91.7,
       "wilson_lo": 74.2,
       "wilson_hi": 97.7,
-      "fisher_vs_native": "(referência)",
+      "fisher_vs_native": "(reference)",
       "p": null
     },
     {
@@ -298,7 +298,7 @@
       "taxa_pct": 41.7,
       "wilson_lo": 24.5,
       "wilson_hi": 61.2,
-      "fisher_vs_native": "(referência)",
+      "fisher_vs_native": "(reference)",
       "p": null
     },
     {
@@ -334,7 +334,7 @@
       "taxa_pct": 100.0,
       "wilson_lo": 86.2,
       "wilson_hi": 100.0,
-      "fisher_vs_native": "(referência)",
+      "fisher_vs_native": "(reference)",
       "p": null
     },
     {
@@ -370,7 +370,7 @@
       "taxa_pct": 100.0,
       "wilson_lo": 86.2,
       "wilson_hi": 100.0,
-      "fisher_vs_native": "(referência)",
+      "fisher_vs_native": "(reference)",
       "p": null
     },
     {
@@ -406,7 +406,7 @@
       "taxa_pct": 29.2,
       "wilson_lo": 14.9,
       "wilson_hi": 49.2,
-      "fisher_vs_native": "(referência)",
+      "fisher_vs_native": "(reference)",
       "p": null
     },
     {
@@ -442,7 +442,7 @@
       "taxa_pct": 100.0,
       "wilson_lo": 86.2,
       "wilson_hi": 100.0,
-      "fisher_vs_native": "(referência)",
+      "fisher_vs_native": "(reference)",
       "p": null
     },
     {
@@ -478,7 +478,7 @@
       "taxa_pct": 100.0,
       "wilson_lo": 86.2,
       "wilson_hi": 100.0,
-      "fisher_vs_native": "(referência)",
+      "fisher_vs_native": "(reference)",
       "p": null
     },
     {
@@ -514,7 +514,7 @@
       "taxa_pct": 70.8,
       "wilson_lo": 50.8,
       "wilson_hi": 85.1,
-      "fisher_vs_native": "(referência)",
+      "fisher_vs_native": "(reference)",
       "p": null
     },
     {
@@ -550,7 +550,7 @@
       "aderentes": 24,
       "n_conformes": 24,
       "taxa_pct": 100.0,
-      "fisher_vs_native": "(referência)",
+      "fisher_vs_native": "(reference)",
       "p": null
     },
     {
@@ -580,7 +580,7 @@
       "aderentes": 24,
       "n_conformes": 24,
       "taxa_pct": 100.0,
-      "fisher_vs_native": "(referência)",
+      "fisher_vs_native": "(reference)",
       "p": null
     },
     {
@@ -610,7 +610,7 @@
       "aderentes": 3,
       "n_conformes": 3,
       "taxa_pct": 100.0,
-      "fisher_vs_native": "(referência)",
+      "fisher_vs_native": "(reference)",
       "p": null
     },
     {
@@ -640,7 +640,7 @@
       "aderentes": 24,
       "n_conformes": 24,
       "taxa_pct": 100.0,
-      "fisher_vs_native": "(referência)",
+      "fisher_vs_native": "(reference)",
       "p": null
     },
     {
@@ -670,7 +670,7 @@
       "aderentes": 23,
       "n_conformes": 24,
       "taxa_pct": 95.8,
-      "fisher_vs_native": "(referência)",
+      "fisher_vs_native": "(reference)",
       "p": null
     },
     {
@@ -700,7 +700,7 @@
       "aderentes": 8,
       "n_conformes": 8,
       "taxa_pct": 100.0,
-      "fisher_vs_native": "(referência)",
+      "fisher_vs_native": "(reference)",
       "p": null
     },
     {
@@ -730,7 +730,7 @@
       "aderentes": 24,
       "n_conformes": 24,
       "taxa_pct": 100.0,
-      "fisher_vs_native": "(referência)",
+      "fisher_vs_native": "(reference)",
       "p": null
     },
     {
@@ -760,7 +760,7 @@
       "aderentes": 20,
       "n_conformes": 22,
       "taxa_pct": 90.9,
-      "fisher_vs_native": "(referência)",
+      "fisher_vs_native": "(reference)",
       "p": null
     },
     {
@@ -790,7 +790,7 @@
       "aderentes": 10,
       "n_conformes": 10,
       "taxa_pct": 100.0,
-      "fisher_vs_native": "(referência)",
+      "fisher_vs_native": "(reference)",
       "p": null
     },
     {
@@ -820,7 +820,7 @@
       "aderentes": 24,
       "n_conformes": 24,
       "taxa_pct": 100.0,
-      "fisher_vs_native": "(referência)",
+      "fisher_vs_native": "(reference)",
       "p": null
     },
     {
@@ -850,7 +850,7 @@
       "aderentes": 24,
       "n_conformes": 24,
       "taxa_pct": 100.0,
-      "fisher_vs_native": "(referência)",
+      "fisher_vs_native": "(reference)",
       "p": null
     },
     {
@@ -880,7 +880,7 @@
       "aderentes": 7,
       "n_conformes": 7,
       "taxa_pct": 100.0,
-      "fisher_vs_native": "(referência)",
+      "fisher_vs_native": "(reference)",
       "p": null
     },
     {
@@ -910,7 +910,7 @@
       "aderentes": 24,
       "n_conformes": 24,
       "taxa_pct": 100.0,
-      "fisher_vs_native": "(referência)",
+      "fisher_vs_native": "(reference)",
       "p": null
     },
     {
@@ -940,7 +940,7 @@
       "aderentes": 24,
       "n_conformes": 24,
       "taxa_pct": 100.0,
-      "fisher_vs_native": "(referência)",
+      "fisher_vs_native": "(reference)",
       "p": null
     },
     {
@@ -970,7 +970,7 @@
       "aderentes": 17,
       "n_conformes": 17,
       "taxa_pct": 100.0,
-      "fisher_vs_native": "(referência)",
+      "fisher_vs_native": "(reference)",
       "p": null
     },
     {

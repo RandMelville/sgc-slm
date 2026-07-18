@@ -37,7 +37,7 @@ from scipy.stats import mannwhitneyu
 
 HERE = Path(__file__).resolve().parent
 
-MODELO_JUIZ = "claude-opus-4-8"  # juiz forte: é o regime em que a validade ~80% (Zheng) se aplica
+MODELO_JUIZ = "claude-opus-4-8"  # strong judge: the regime where the ~80% validity (Zheng) holds
 
 DOMINIO_CFG = {
     "educacao": {
@@ -102,7 +102,7 @@ def carregar_cenarios(path):
 
 
 def dedup_conformes(registros):
-    """Um registro por chave, preferindo sucesso a erro; mantém só os CONFORMES."""
+    """One record per key, preferring success over error; keeps only CONFORMANT ones."""
     best = {}
     for r in registros:
         k = (r["modelo"], r["condicao"], r["contrato"], r["cenario_id"], r["seed"])
@@ -113,7 +113,7 @@ def dedup_conformes(registros):
 
 
 def render_resposta(raw):
-    """Renderiza o conteúdo de forma neutra (não revela a estratégia)."""
+    """Render the content neutrally (does not reveal the strategy)."""
     try:
         return json.dumps(json.loads(raw), ensure_ascii=False, indent=2)
     except (json.JSONDecodeError, TypeError):
@@ -138,8 +138,8 @@ def julgar(client, rubrica, cenario_txt, resposta_txt):
 
 
 def agregar(juizos):
-    """RQ2 blindado: por (modelo, contrato), compara grammar vs native (Mann-Whitney U)."""
-    notas = defaultdict(list)  # (modelo, contrato, condicao) -> [notas]
+    """Hardened RQ2: per (model, contract), compares grammar vs native (Mann-Whitney U)."""
+    notas = defaultdict(list)  # (model, contract, condition) -> [scores]
     for j in juizos:
         notas[(j["modelo"], j["contrato"], j["condicao"])].append(j["nota"])
 
@@ -147,9 +147,9 @@ def agregar(juizos):
     contratos = sorted({j["contrato"] for j in juizos})
     linhas = []
     print("\n" + "=" * 88)
-    print(f"RQ2 BLINDADO — nota do juiz (1–5) entre conformes; grammar vs native (Mann-Whitney)")
+    print("RQ2 BLIND -- judge score (1-5) among conformant; grammar vs native (Mann-Whitney)")
     print("=" * 88)
-    print(f"{'modelo':<22} {'K':<3} {'nat n/méd':>12} {'gram n/méd':>12} {'U vs native':>16}")
+    print(f"{'model':<22} {'K':<3} {'nat n/mean':>12} {'gram n/mean':>12} {'U vs native':>16}")
     for m in modelos:
         for k in contratos:
             nat = notas.get((m, k, "native"), [])
@@ -166,7 +166,7 @@ def agregar(juizos):
             if len(nat) >= 3 and len(gram) >= 3:
                 # two-sided: detects degradation OR improvement of quality under grammar
                 _, p = mannwhitneyu(gram, nat, alternative="two-sided")
-            pstr = f"p={p:.3f}" if p is not None else "— (n baixo)"
+            pstr = f"p={p:.3f}" if p is not None else "— (low n)"
             print(f"{m:<22} {k:<3} {n_nat:>4}/{str(med_nat):>6} "
                   f"{n_gram:>4}/{str(med_gram):>6} {pstr:>16}")
             linhas.append({
@@ -183,19 +183,19 @@ def agregar(juizos):
     for j in juizos:
         pooled[j["condicao"]].append(j["nota"])
     resumo = {c: {"n": len(v), "media": round(sum(v) / len(v), 3)} for c, v in pooled.items()}
-    print(f"\nAgregado por condição (todas as células): {resumo}")
+    print(f"\nAggregate by condition (all cells): {resumo}")
     return {"por_celula": linhas, "agregado_por_condicao": resumo, "modelo_juiz": MODELO_JUIZ}
 
 
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--dominio", choices=list(DOMINIO_CFG.keys()), default="educacao")
-    ap.add_argument("--limite", type=int, default=None, help="corta o nº de julgamentos (teste)")
+    ap.add_argument("--limite", type=int, default=None, help="cap the number of judgments (for testing)")
     args = ap.parse_args()
 
     if not os.environ.get("ANTHROPIC_API_KEY"):
-        sys.exit("Defina ANTHROPIC_API_KEY (export ANTHROPIC_API_KEY=...).")
-    import anthropic  # import tardio: só falha se a chave existir e for rodar
+        sys.exit("Set ANTHROPIC_API_KEY (export ANTHROPIC_API_KEY=...).")
+    import anthropic  # late import: only fails if the key exists and it will actually run
 
     cfg = DOMINIO_CFG[args.dominio]
     registros = json.loads((HERE / cfg["conf"]).read_text(encoding="utf-8"))
@@ -210,18 +210,18 @@ def main():
 
     restantes = [r for r in conformes
                  if (r["modelo"], r["condicao"], r["contrato"], r["cenario_id"], r["seed"]) not in feitos]
-    print(f"[{args.dominio}] conformes: {len(conformes)} | já julgados: {len(feitos)} | "
-          f"a julgar: {len(restantes)}")
-    print(f"Juiz: {MODELO_JUIZ}. Custo estimado ~ US$ {len(restantes) * 0.01:.2f} "
-          f"(ordem de grandeza; ~1k tokens in + poucos out por julgamento).\n")
+    print(f"[{args.dominio}] conformant: {len(conformes)} | already judged: {len(feitos)} | "
+          f"to judge: {len(restantes)}")
+    print(f"Judge: {MODELO_JUIZ}. Estimated cost ~ US$ {len(restantes) * 0.01:.2f} "
+          f"(order of magnitude; ~1k tokens in + few out per judgment).\n")
 
     client = anthropic.Anthropic()
     for i, r in enumerate(restantes, 1):
         cen = cenarios.get(r["cenario_id"], "")
         try:
             nota, racioc = julgar(client, cfg["rubrica"], cen, render_resposta(r.get("resposta_ia", "")))
-        except Exception as e:  # noqa: BLE001 — registra e segue (resumível)
-            print(f"  ! erro em {r['modelo']}/{r['condicao']}/{r['contrato']}/"
+        except Exception as e:  # noqa: BLE001 -- record and continue (resumable)
+            print(f"  ! error in {r['modelo']}/{r['condicao']}/{r['contrato']}/"
                   f"cen{r['cenario_id']}/s{r['seed']}: {e}")
             continue
         juizos.append({
@@ -231,13 +231,13 @@ def main():
         })
         out.write_text(json.dumps(juizos, ensure_ascii=False, indent=2), encoding="utf-8")
         if i % 20 == 0 or i == len(restantes):
-            print(f"  {i}/{len(restantes)} julgados…")
+            print(f"  {i}/{len(restantes)} judged…")
 
-    print(f"\nJulgamentos salvos em {out} (total {len(juizos)}).")
+    print(f"\nJudgments saved to {out} (total {len(juizos)}).")
     tabelas = agregar(juizos)
     tout = HERE / "resultados" / f"tabelas_juiz_{args.dominio}.json"
     tout.write_text(json.dumps(tabelas, ensure_ascii=False, indent=2, default=str), encoding="utf-8")
-    print(f"Tabelas RQ2 blindado salvas em {tout}")
+    print(f"Hardened-RQ2 tables saved to {tout}")
 
 
 if __name__ == "__main__":

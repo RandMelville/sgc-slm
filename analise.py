@@ -56,7 +56,7 @@ def normalize(text):
 
 
 def texto_gerado(raw):
-    """Extrai todo o texto livre da resposta, tolerando qualquer contrato/malformação."""
+    """Extract all free text from the response, tolerating any contract/malformation."""
     try:
         p = json.loads(raw)
     except (json.JSONDecodeError, TypeError):
@@ -139,7 +139,7 @@ def main():
         key = (r["modelo"], r["contrato"], r["condicao"])
         a = agg[key]
         a["n"] += 1
-        if "erro" in r:  # timeout/erro conta como não-conforme (denominador)
+        if "erro" in r:  # timeout/error counts as non-conformant (denominator)
             continue
         conforme = bool(r.get("conforme"))
         a["c"] += int(conforme)
@@ -147,20 +147,20 @@ def main():
             a["lat"].append(r["latencia_ms"])
         if r.get("tokens_out") is not None:
             a["tok"].append(r["tokens_out"])
-        if conforme:  # RQ2: qualidade só entre conformes
+        if conforme:  # RQ2: quality only among conformant responses
             a["q_n"] += 1
             a["q_ad"] += int(adere(r.get("resposta_ia", ""), stems))
 
     def med(xs):
         return round(sum(xs) / len(xs)) if xs else None
 
-    print(f"\n### DOMÍNIO: {args.dominio}  (entrada: {inp.name})")
+    print(f"\n### DOMAIN: {args.dominio}  (input: {inp.name})")
 
     # ---------------- RQ1 ----------------
     print("=" * 92)
-    print("RQ1 — Conformidade estrutural por modelo x contrato x condição")
+    print("RQ1 -- Structural conformity by model x contract x condition")
     print("=" * 92)
-    print(f"{'modelo':<22} {'K':<3} {'condição':<8} {'conf.':>8} {'taxa':>6} "
+    print(f"{'model':<22} {'K':<3} {'condition':<8} {'conf.':>8} {'rate':>6} "
           f"{'Wilson 95%':>14} {'Fisher vs native':>18}")
     tabela_rq1 = []
     for m in modelos:
@@ -173,7 +173,7 @@ def main():
                 lo, hi = wilson_ci(a["c"], a["n"])
                 taxa = round(100 * a["c"] / a["n"], 1)
                 if cond == "native":
-                    fstr, p = "(referência)", None
+                    fstr, p = "(reference)", None
                 else:
                     p = fisher(a["c"], a["n"], base["c"], base["n"]) if base["n"] else None
                     fstr = fmt_p(p)
@@ -187,10 +187,10 @@ def main():
 
     # ---------------- RQ2 ----------------
     print("\n" + "=" * 92)
-    print(f"RQ2 — Custo de qualidade: aderência ao léxico ({args.dominio}) ENTRE conformes")
-    print("(guard: ignore comparações onde o n-conforme do native é ~0)")
+    print(f"RQ2 -- Quality cost: lexicon adherence ({args.dominio}) AMONG conformant")
+    print("(guard: ignore comparisons where native's conformant n is ~0)")
     print("=" * 92)
-    print(f"{'modelo':<22} {'K':<3} {'condição':<8} {'aderência(conf.)':>18} {'taxa':>6} "
+    print(f"{'model':<22} {'K':<3} {'condition':<8} {'adherence(conf.)':>18} {'rate':>6}"
           f"{'Fisher vs native':>18}")
     tabela_rq2 = []
     for m in modelos:
@@ -202,7 +202,7 @@ def main():
                     continue
                 taxa = round(100 * a["q_ad"] / a["q_n"], 1)
                 if cond == "native" or base["q_n"] == 0:
-                    fstr, p = "(referência)" if cond == "native" else "—", None
+                    fstr, p = "(reference)" if cond == "native" else "—", None
                 else:
                     p = fisher(a["q_ad"], a["q_n"], base["q_ad"], base["q_n"])
                     fstr = fmt_p(p)
@@ -214,9 +214,9 @@ def main():
 
     # ---------------- RQ3 ----------------
     print("\n" + "=" * 92)
-    print("RQ3 — Custo computacional: latência média (ms) e tokens de saída por condição")
+    print("RQ3 -- Compute cost: mean latency (ms) and output tokens per condition")
     print("=" * 92)
-    print(f"{'modelo':<22} {'K':<3} {'condição':<8} {'lat.média(ms)':>14} {'tokens.out':>12}")
+    print(f"{'model':<22} {'K':<3} {'condition':<8} {'lat.mean(ms)':>14} {'tokens.out':>12}")
     tabela_rq3 = []
     for m in modelos:
         for k in contratos:
@@ -233,7 +233,7 @@ def main():
     out.write_text(json.dumps({"dominio": args.dominio, "rq1": tabela_rq1,
                                "rq2": tabela_rq2, "rq3": tabela_rq3},
                               ensure_ascii=False, indent=2, default=str), encoding="utf-8")
-    print(f"\nTabelas salvas em {out}")
+    print(f"\nTables saved to {out}")
 
 
 if __name__ == "__main__":

@@ -201,6 +201,6 @@ def fig4():
 
 
 if __name__ == "__main__":
-    print("Gerando figuras em", OUT)
+    print("Generating figures in", OUT)
     fig1(); fig2(); fig3(); fig4()
-    print("Concluido.")
+    print("Done.")

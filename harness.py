@@ -97,7 +97,7 @@ def chave(r):
     return (r["modelo"], r["condicao"], r["contrato"], r["cenario_id"], r["seed"])
 
 
-def diagnosticar(contrato, raw):
+def diagnose(contrato, raw):
     try:
         p = json.loads(raw)
     except (json.JSONDecodeError, TypeError):
@@ -136,7 +136,7 @@ def main():
     out_path.parent.mkdir(parents=True, exist_ok=True)
     resultados = json.loads(out_path.read_text(encoding="utf-8")) if out_path.exists() else []
     feitos = {chave(r) for r in resultados if "erro" not in r}
-    print(f"Retomando: {len(feitos)} chamadas já concluídas, {total - len(feitos)} restantes.\n")
+    print(f"Resuming: {len(feitos)} calls already completed, {total - len(feitos)} remaining.\n")
 
     feito_nesta_run = 0
     for modelo in args.models:
@@ -154,13 +154,13 @@ def main():
                         try:
                             r = chamar(modelo, montar_messages(contrato, condicao, c["user"]),
                                        condicao, contrato, seed, args.timeout)
-                            conforme, motivo = diagnosticar(contrato, r["resposta_ia"])
+                            conforme, motivo = diagnose(contrato, r["resposta_ia"])
                             reg.update(r)
                             reg["conforme"] = conforme
                             reg["motivo"] = motivo
                             n_cel += 1
                             conf_cel += int(conforme)
-                        except Exception as e:  # noqa: BLE001 — registra e segue
+                        except Exception as e:  # noqa: BLE001 -- record and continue
                             reg["erro"] = str(e)
                         resultados.append(reg)
                         feito_nesta_run += 1
@@ -170,11 +170,11 @@ def main():
                             encoding="utf-8")
                 if n_cel:
                     print(f"{modelo:<22} {contrato_id} {condicao:<8} "
-                          f"conforme {conf_cel}/{n_cel} ({100*conf_cel/n_cel:4.0f}%)")
+                          f"conformant {conf_cel}/{n_cel} ({100*conf_cel/n_cel:4.0f}%)")
 
-    print(f"\nConcluído [{args.dominio}]. {feito_nesta_run} novas chamadas. "
-          f"Total no arquivo: {len(resultados)}.")
-    print(f"Saída: {out_path}")
+    print(f"\nDone [{args.dominio}]. {feito_nesta_run} new calls. "
+          f"Total in file: {len(resultados)}.")
+    print(f"Output: {out_path}")
 
 
 if __name__ == "__main__":
