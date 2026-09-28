@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """RQ2 equivalence / robustness check (no API, no Ollama).
 
-Reads the blind-judge raw outputs (resultados/juizo_<dominio>.json) and reports,
+Reads the blind-judge raw outputs (results/judgments_<domain>.json) and reports,
 for grammar vs. native quality among conformant responses:
 
   (a) the naive aggregate gap (as in Table 2), and
@@ -13,12 +13,14 @@ The paired result guards the null against the survivorship confound (native's
 conformant set is easy-biased on collapsing cells). The reasoning-tax probe model
 (qwen3:4b, education-only) is excluded to match the paper's 5-model core.
 
-Usage:  python3 equivalencia_rq2.py
+Usage:  python3 equivalence_rq2.py
 """
 import json, os, numpy as np
 from scipy import stats
 
-RESULTS = os.path.join(os.path.dirname(__file__), "resultados")
+RESULTS = os.path.join(os.path.dirname(__file__), "results")
+# Canonical internal domain keys mapped onto the English file slugs.
+SLUG = {"educacao": "education", "medico": "clinical"}
 EXCLUDE = {"qwen3:4b"}          # reasoning-tax probe, outside the 5-model instruct core
 MARGIN = 0.25                    # smallest quality effect of interest (1-5 scale)
 BOOT_N = 10000
@@ -26,7 +28,7 @@ RNG = np.random.RandomState(0)   # fixed for reproducibility
 
 
 def load(dom):
-    path = os.path.join(RESULTS, f"juizo_{dom}.json")
+    path = os.path.join(RESULTS, f"judgments_{SLUG[dom]}.json")
     return [r for r in json.load(open(path)) if r["modelo"] not in EXCLUDE]
 
 

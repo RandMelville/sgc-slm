@@ -1,6 +1,6 @@
 """Analysis of the SLM structural-conformity experiment (multi-domain).
 
-Reads resultados/conformidade[_domain].json and answers the three questions:
+Reads results/conformity_<domain>.json and answers the three questions:
   RQ1 -- conformity by model x condition x contract (rate + Wilson CI);
          Fisher's exact native-vs-grammar and native-vs-few-shot.
   RQ2 -- quality cost: among CONFORMANT responses, does the grammar condition
@@ -16,8 +16,12 @@ count as non-conformant (conservative). RQ2 guard: the per-cell conformant n is
 reported, and quality comparisons must not be read where native is near zero.
 
 Usage:
-    python3 analise.py                    # education (default)
-    python3 analise.py --dominio medico
+    python3 analysis.py                     # education (default)
+    python3 analysis.py --domain clinical
+
+Domain keys are stored internally in Portuguese ("educacao", "medico") because they
+are recorded inside the archived result files; the command line accepts the English
+names and the original Portuguese ones interchangeably.
 """
 import argparse
 import json
@@ -45,9 +49,16 @@ LEXICOS = {
     },
 }
 DOMINIO_INPUT = {
-    "educacao": "resultados/conformidade.json",
-    "medico": "resultados/conformidade_medico.json",
+    "educacao": "results/conformity_education.json",
+    "medico": "results/conformity_clinical.json",
 }
+# English command-line names mapped onto the canonical internal keys.
+DOMAIN_ALIASES = {
+    "education": "educacao", "educacao": "educacao",
+    "clinical": "medico", "medico": "medico",
+}
+# Slug used when naming output files.
+SLUG = {"educacao": "education", "medico": "clinical"}
 
 
 def normalize(text):
@@ -111,14 +122,16 @@ def fmt_p(p):
 
 def main():
     ap = argparse.ArgumentParser()
-    ap.add_argument("--dominio", choices=list(LEXICOS.keys()), default="educacao")
+    ap.add_argument("--domain", "--dominio", dest="dominio",
+                    choices=list(DOMAIN_ALIASES.keys()), default="education")
     ap.add_argument("--in", dest="inp", default=None)
     ap.add_argument("--out", default=None)
     args = ap.parse_args()
+    args.dominio = DOMAIN_ALIASES[args.dominio]
 
     stems = LEXICOS[args.dominio]
     inp = Path(args.inp or str(HERE / DOMINIO_INPUT[args.dominio]))
-    out = Path(args.out or str(HERE / "resultados" / f"tabelas_{args.dominio}.json"))
+    out = Path(args.out or str(HERE / "results" / f"tables_{SLUG[args.dominio]}.json"))
 
     registros = json.loads(inp.read_text(encoding="utf-8"))
     # De-dup by key: a successful attempt overrides a re-fetch that errored,

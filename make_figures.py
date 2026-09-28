@@ -2,7 +2,7 @@
 """Generate the paper figures from the real results (conformity + judge).
 
 Writes figures/*.pdf (vector, for LaTeX) and *.png (quick preview), built entirely
-from resultados/tabelas_*.json and resultados/juizo_*.json.
+from results/tables_*.json and results/judgments_*.json.
 """
 import json
 import collections
@@ -15,7 +15,9 @@ import matplotlib.pyplot as plt
 from matplotlib.patches import Patch
 
 HERE = Path(__file__).resolve().parent
-RES = HERE / "resultados"
+RES = HERE / "results"
+# Canonical internal domain keys mapped onto the English file slugs.
+SLUG = {"educacao": "education", "medico": "clinical"}
 OUT = HERE / "figures"
 OUT.mkdir(parents=True, exist_ok=True)
 
@@ -41,8 +43,8 @@ DOMS = [("educacao", "Education"), ("medico", "Clinical triage")]
 
 
 def load(dom):
-    return (json.loads((RES / f"tabelas_{dom}.json").read_text()),
-            json.loads((RES / f"juizo_{dom}.json").read_text()))
+    return (json.loads((RES / f"tables_{SLUG[dom]}.json").read_text()),
+            json.loads((RES / f"judgments_{SLUG[dom]}.json").read_text()))
 
 
 def rq1_rate(tab, modelo, contrato, cond):

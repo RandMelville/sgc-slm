@@ -1,6 +1,6 @@
 """Clinical instance of the contracts (second domain of the study).
 
-Same structure as `contratos.py` (education): three contracts of increasing complexity
+Same structure as `contracts_education.py`: three contracts of increasing complexity
 (K1 flat -> K2 nested -> K3 enums + typed list), each with a system prompt, JSON Schema,
 few-shot exemplar, and deterministic per-contract validator.
 

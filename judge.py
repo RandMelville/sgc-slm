@@ -20,11 +20,17 @@ no paid API" claim (which is about the system under study, not the evaluation ap
 
 Requires:  pip install anthropic scipy   and   export ANTHROPIC_API_KEY=...
 Usage:
-    python3 juiz.py --dominio educacao
-    python3 juiz.py --dominio medico
-Resumable and crash-safe: writes juizo_<dominio>.json after each judgment and skips
+    python3 judge.py --domain education
+    python3 judge.py --domain clinical
+Resumable and crash-safe: writes judgments_<domain>.json after each judgment and skips
 those already done. At the end, aggregates grammar-vs-native (Mann-Whitney U) and writes
-tabelas_juiz_<dominio>.json. Approximate cost printed at startup.
+tables_judge_<domain>.json. Approximate cost printed at startup.
+
+Domain keys are stored internally in Portuguese ("educacao", "medico") because they
+are recorded inside the archived result files; the command line accepts the English
+names and the original Portuguese ones interchangeably. The rubrics below are kept in
+Portuguese because they are the prompt actually sent to the judge, and translating
+them would change the measurement instrument.
 """
 import argparse
 import json
@@ -39,10 +45,18 @@ HERE = Path(__file__).resolve().parent
 
 MODELO_JUIZ = "claude-opus-4-8"  # strong judge: the regime where the ~80% validity (Zheng) holds
 
+# English command-line names mapped onto the canonical internal keys.
+DOMAIN_ALIASES = {
+    "education": "educacao", "educacao": "educacao",
+    "clinical": "medico", "medico": "medico",
+}
+# Slug used when naming output files.
+SLUG = {"educacao": "education", "medico": "clinical"}
+
 DOMINIO_CFG = {
     "educacao": {
-        "conf": "resultados/conformidade.json",
-        "cenarios": "cenarios.jsonl",
+        "conf": "results/conformity_education.json",
+        "cenarios": "scenarios_education.jsonl",
         "rubrica": (
             "Você é um avaliador especialista em Linguística Textual (tradição de "
             "Ingedore Koch) e em feedback pedagógico de escrita para o ensino básico. "
@@ -59,8 +73,8 @@ DOMINIO_CFG = {
         ),
     },
     "medico": {
-        "conf": "resultados/conformidade_medico.json",
-        "cenarios": "cenarios_medico.jsonl",
+        "conf": "results/conformity_clinical.json",
+        "cenarios": "scenarios_clinical.jsonl",
         "rubrica": (
             "Você é um enfermeiro(a) especialista em triagem clínica e segurança do "
             "paciente. Vai receber (a) uma VINHETA CLÍNICA e (b) uma resposta de um "
@@ -189,9 +203,12 @@ def agregar(juizos):
 
 def main():
     ap = argparse.ArgumentParser()
-    ap.add_argument("--dominio", choices=list(DOMINIO_CFG.keys()), default="educacao")
-    ap.add_argument("--limite", type=int, default=None, help="cap the number of judgments (for testing)")
+    ap.add_argument("--domain", "--dominio", dest="dominio",
+                    choices=list(DOMAIN_ALIASES.keys()), default="education")
+    ap.add_argument("--limit", "--limite", dest="limite", type=int, default=None,
+                    help="cap the number of judgments (for testing)")
     args = ap.parse_args()
+    args.dominio = DOMAIN_ALIASES[args.dominio]
 
     if not os.environ.get("ANTHROPIC_API_KEY"):
         sys.exit("Set ANTHROPIC_API_KEY (export ANTHROPIC_API_KEY=...).")
@@ -204,7 +221,7 @@ def main():
     if args.limite:
         conformes = conformes[: args.limite]
 
-    out = HERE / "resultados" / f"juizo_{args.dominio}.json"
+    out = HERE / "results" / f"judgments_{SLUG[args.dominio]}.json"
     juizos = json.loads(out.read_text(encoding="utf-8")) if out.exists() else []
     feitos = {(j["modelo"], j["condicao"], j["contrato"], j["cenario_id"], j["seed"]) for j in juizos}
 
@@ -235,7 +252,7 @@ def main():
 
     print(f"\nJudgments saved to {out} (total {len(juizos)}).")
     tabelas = agregar(juizos)
-    tout = HERE / "resultados" / f"tabelas_juiz_{args.dominio}.json"
+    tout = HERE / "results" / f"tables_judge_{SLUG[args.dominio]}.json"
     tout.write_text(json.dumps(tabelas, ensure_ascii=False, indent=2, default=str), encoding="utf-8")
     print(f"Hardened-RQ2 tables saved to {tout}")
 

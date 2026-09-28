@@ -4,7 +4,7 @@ Factorial matrix: models x conditions x contracts x scenarios x reps(seed).
 Collects against local Ollama (http://localhost:11434). Saves incrementally and is
 RESUMABLE: if the output file already exists, calls already made are skipped.
 
-MULTI-DOMAIN: the same harness runs on different domains via --dominio, swapping only
+MULTI-DOMAIN: the same harness runs on different domains via --domain, swapping only
 the contracts and scenarios. Strategies, models, seeds, and statistics are identical
 across domains (this is what makes the protocol comparable and reusable).
 
@@ -18,8 +18,12 @@ Determinism: fixed temperature + options.seed per rep (42/43/44).
 Typical usage:
     python3 harness.py --dry-run                 # education (default), shows the matrix
     python3 harness.py                           # runs education (resumable)
-    python3 harness.py --dominio medico          # runs the clinical instance
-    python3 harness.py --dominio medico --models qwen2.5:3b-instruct --contratos K1
+    python3 harness.py --domain clinical         # runs the clinical instance
+    python3 harness.py --domain clinical --models qwen2.5:3b-instruct --contracts K1
+
+Domain keys are stored internally in Portuguese ("educacao", "medico") because they
+are recorded inside the archived result files; the command line accepts the English
+names and the original Portuguese ones interchangeably.
 """
 import argparse
 import importlib
@@ -43,12 +47,18 @@ SEEDS = [42, 43, 44]  # 3 reproducible reps
 TEMPERATURE = 0.2
 
 # Domain instances: (contracts module, scenarios, default output path).
-# Education keeps the original paths so as not to break runs in progress.
 DOMINIOS = {
-    "educacao": {"contratos": "contratos", "cenarios": "cenarios.jsonl",
-                 "out": "resultados/conformidade.json"},
-    "medico": {"contratos": "contratos_medico", "cenarios": "cenarios_medico.jsonl",
-               "out": "resultados/conformidade_medico.json"},
+    "educacao": {"contratos": "contracts_education",
+                 "cenarios": "scenarios_education.jsonl",
+                 "out": "results/conformity_education.json"},
+    "medico": {"contratos": "contracts_clinical",
+               "cenarios": "scenarios_clinical.jsonl",
+               "out": "results/conformity_clinical.json"},
+}
+# English command-line names mapped onto the canonical internal keys.
+DOMAIN_ALIASES = {
+    "education": "educacao", "educacao": "educacao",
+    "clinical": "medico", "medico": "medico",
 }
 
 
@@ -107,16 +117,20 @@ def diagnose(contrato, raw):
 
 def main():
     ap = argparse.ArgumentParser()
-    ap.add_argument("--dominio", choices=list(DOMINIOS.keys()), default="educacao")
+    ap.add_argument("--domain", "--dominio", dest="dominio",
+                    choices=list(DOMAIN_ALIASES.keys()), default="education")
     ap.add_argument("--models", nargs="*", default=MODELOS)
-    ap.add_argument("--condicoes", nargs="*", default=CONDICOES)
-    ap.add_argument("--contratos", nargs="*", default=None)
+    ap.add_argument("--conditions", "--condicoes", dest="condicoes",
+                    nargs="*", default=CONDICOES)
+    ap.add_argument("--contracts", "--contratos", dest="contratos",
+                    nargs="*", default=None)
     ap.add_argument("--seeds", nargs="*", type=int, default=SEEDS)
-    ap.add_argument("--cenarios", default=None)
+    ap.add_argument("--scenarios", "--cenarios", dest="cenarios", default=None)
     ap.add_argument("--out", default=None)
     ap.add_argument("--timeout", type=int, default=180)
     ap.add_argument("--dry-run", action="store_true")
     args = ap.parse_args()
+    args.dominio = DOMAIN_ALIASES[args.dominio]
 
     cfg = DOMINIOS[args.dominio]
     CONTRATOS = importlib.import_module(cfg["contratos"]).CONTRATOS
