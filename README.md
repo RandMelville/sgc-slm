@@ -52,7 +52,8 @@ pip3 install -r requirements.txt
 | Collect the matrix (per domain) | `python3 harness.py --domain education` / `--domain clinical` | `results/conformity_*.json` |
 | RQ1 conformity + RQ3 compute (Fisher/Wilson) | `python3 analysis.py --domain education` / `clinical` | `results/tables_*.json` |
 | RQ2 quality (blind LLM-as-judge) | `python3 judge.py --domain education` / `clinical` | `results/judgments_*.json`, `tables_judge_*.json` |
-| RQ2 equivalence (paired gap, bootstrap CI, TOST) | `python3 equivalence_rq2.py` | printed to stdout |
+| RQ2 equivalence (paired gap, bootstrap CI, TOST, margin sensitivity) | `python3 equivalence_rq2.py` | printed to stdout |
+| Failure taxonomy of non-conformant calls (Table 4) | `python3 failure_taxonomy.py` | `results/failure_taxonomy.json` |
 | Figures 1–4 | `python3 make_figures.py` | `figures/*.pdf` |
 
 `harness.py` is incremental and **resumable** (Ctrl-C and re-run to continue).
@@ -69,7 +70,8 @@ re-run without re-collecting.
 | `harness.py` | multi-domain collector against Ollama (`--domain`); incremental, resumable |
 | `analysis.py` | RQ1/RQ3: Fisher's exact + Wilson intervals + quality proxy (`--domain`) |
 | `judge.py` | RQ2: blind LLM-as-judge (G-Eval pointwise 1–5), strategy-blind |
-| `equivalence_rq2.py` | RQ2 robustness: scenario-matched paired gap, bootstrap CI, TOST equivalence |
+| `equivalence_rq2.py` | RQ2 robustness: scenario-matched paired gap, bootstrap CI, TOST equivalence and margin sensitivity |
+| `failure_taxonomy.py` | Classifies every non-conformant call (enum, type, missing key, empty string, malformed JSON, timeout); reads archived results only |
 | `make_figures.py` | generates the four vector figures |
 | `scenarios_education.jsonl` | 8 student-writing scenarios (education) |
 | `scenarios_clinical.jsonl` | 8 synthetic clinical notes (fictitious; no real personal data) |

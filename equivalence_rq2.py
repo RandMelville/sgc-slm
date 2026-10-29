@@ -7,7 +7,10 @@ for grammar vs. native quality among conformant responses:
   (a) the naive aggregate gap (as in Table 2), and
   (b) a scenario-matched PAIRED gap restricted to (model x contract x scenario x
       seed) cells where BOTH strategies conform, with a 95% bootstrap CI,
-      Wilcoxon signed-rank, and a TOST equivalence test against a +-0.25 margin.
+      Wilcoxon signed-rank, and a TOST equivalence test against a +-0.25 margin, and
+  (c) a margin-sensitivity sweep: the TOST p-value at several margins and the smallest
+      margin for which equivalence is established at alpha = 0.05 (the margin does not
+      have to be taken on trust).
 
 The paired result guards the null against the survivorship confound (native's
 conformant set is easy-biased on collapsing cells). The reasoning-tax probe model
@@ -51,6 +54,16 @@ def tost(diff, margin):
     return max(p_low, p_high)
 
 
+def min_margin(diff, alpha=0.05):
+    """Smallest equivalence margin for which TOST rejects at `alpha`.
+
+    Equals the larger absolute end of the (1 - 2*alpha) confidence interval of the mean.
+    """
+    se = diff.std(ddof=1) / np.sqrt(len(diff))
+    t = stats.t.ppf(1 - alpha, len(diff) - 1)
+    return max(abs(diff.mean() - t * se), abs(diff.mean() + t * se))
+
+
 def main():
     for dom in ["educacao", "medico"]:
         recs = load(dom)
@@ -79,6 +92,9 @@ def main():
               f"| gap={diff.mean():+.3f} | 95% CI [{ci[0]:+.3f}, {ci[1]:+.3f}]")
         print(f"Wilcoxon p={wp:.3f} | TOST(+-{MARGIN}) p={tost_p:.4f} -> "
               f"{'EQUIVALENT' if tost_p < 0.05 else 'inconclusive'}")
+        sweep = ", ".join(f"+-{m:.2f}: p={tost(diff, m):.4f}" for m in (0.10, 0.15, 0.20, 0.25))
+        print(f"margin sweep (TOST p): {sweep}")
+        print(f"smallest margin establishing equivalence at alpha=0.05: +-{min_margin(diff):.3f}")
 
 
 if __name__ == "__main__":

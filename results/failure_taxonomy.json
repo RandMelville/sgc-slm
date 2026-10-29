@@ -1,0 +1,148 @@
+{
+  "education": {
+    "calls_per_strategy": {
+      "native": 360,
+      "fewshot": 360,
+      "grammar": 360
+    },
+    "failures": {
+      "native": {
+        "invalid enum value": 10,
+        "malformed JSON": 17,
+        "empty required string": 1,
+        "wrong type or shape": 32,
+        "timeout or transport error": 2
+      },
+      "fewshot": {
+        "invalid enum value": 35,
+        "malformed JSON": 2,
+        "missing key": 29
+      },
+      "grammar": {
+        "empty required string": 1,
+        "timeout or transport error": 1
+      }
+    },
+    "enum_failure_kinds": {
+      "native": {
+        "accent or case variant": 6,
+        "out of vocabulary": 4
+      },
+      "fewshot": {
+        "accent or case variant": 34,
+        "out of vocabulary": 1
+      }
+    },
+    "misspelled_key_failures": {
+      "native": 0,
+      "fewshot": 23,
+      "grammar": 0
+    },
+    "top_out_of_vocabulary": [
+      [
+        "emocao",
+        1
+      ],
+      [
+        "lexicais",
+        1
+      ],
+      [
+        "iniciante",
+        1
+      ],
+      [
+        "iniciado",
+        1
+      ],
+      [
+        "iniciario",
+        1
+      ]
+    ]
+  },
+  "clinical": {
+    "calls_per_strategy": {
+      "native": 360,
+      "fewshot": 360,
+      "grammar": 360
+    },
+    "failures": {
+      "native": {
+        "invalid enum value": 73,
+        "wrong type or shape": 2,
+        "malformed JSON": 2
+      },
+      "fewshot": {
+        "invalid enum value": 63,
+        "wrong type or shape": 1,
+        "missing key": 1
+      },
+      "grammar": {
+        "timeout or transport error": 1
+      }
+    },
+    "enum_failure_kinds": {
+      "native": {
+        "accent or case variant": 20,
+        "out of vocabulary": 53
+      },
+      "fewshot": {
+        "out of vocabulary": 47,
+        "accent or case variant": 16
+      }
+    },
+    "misspelled_key_failures": {
+      "native": 0,
+      "fewshot": 0,
+      "grammar": 0
+    },
+    "top_out_of_vocabulary": [
+      [
+        "digestivo",
+        10
+      ],
+      [
+        "circulatório",
+        9
+      ],
+      [
+        "motor",
+        8
+      ],
+      [
+        "gastrointestinal",
+        6
+      ],
+      [
+        "abdominal",
+        4
+      ],
+      [
+        "circulatorio",
+        4
+      ],
+      [
+        "neuromuscular",
+        4
+      ],
+      [
+        "torax",
+        3
+      ]
+    ]
+  },
+  "qwen25_education_K3_nivel_texto": {
+    "native": {
+      "intermediário": 5,
+      "intermediario": 19
+    },
+    "fewshot": {
+      "intermediário": 22,
+      "intermediario": 2
+    },
+    "grammar": {
+      "intermediario": 24
+    }
+  }
+}
