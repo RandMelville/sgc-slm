@@ -20,7 +20,7 @@ native, and with no detectable content-quality cost.
 
 ## What runs where
 
-The conformity and compute results are **100% local** (Ollama, CPU), reproducible
+The conformity and compute results are **100% local** (Ollama, GPU via Metal on an Apple M5; see the paper for the hardware disclosure), reproducible
 by seed, with **no paid API**. The RQ2 quality scores are produced by a hosted
 LLM-as-judge (`claude-opus-4-8`) used as an offline measuring instrument; the raw
 judge outputs are archived under `results/` so RQ2 is verifiable **without
@@ -53,6 +53,7 @@ pip3 install -r requirements.txt
 | RQ1 conformity + RQ3 compute (Fisher/Wilson) | `python3 analysis.py --domain education` / `clinical` | `results/tables_*.json` |
 | RQ2 quality (blind LLM-as-judge) | `python3 judge.py --domain education` / `clinical` | `results/judgments_*.json`, `tables_judge_*.json` |
 | RQ2 equivalence (paired gap, bootstrap CI, TOST, margin sensitivity) | `python3 equivalence_rq2.py` | printed to stdout |
+| Scenario-level sensitivity (paired and sign-flip tests, cluster bootstrap, clustered TOST, latency with failed calls) | `python3 sensitivity_r3.py` | `results/sensitivity_r3.json` |
 | Failure taxonomy of non-conformant calls (Table 4) | `python3 failure_taxonomy.py` | `results/failure_taxonomy.json` |
 | Figures 1–4 | `python3 make_figures.py` | `figures/*.pdf` |
 
@@ -70,6 +71,7 @@ re-run without re-collecting.
 | `harness.py` | multi-domain collector against Ollama (`--domain`); incremental, resumable |
 | `analysis.py` | RQ1/RQ3: Fisher's exact + Wilson intervals + quality proxy (`--domain`) |
 | `judge.py` | RQ2: blind LLM-as-judge (G-Eval pointwise 1–5), strategy-blind |
+| `sensitivity_r3.py` | Scenario-level (cluster) sensitivity analyses for conformity, quality equivalence and latency, from the archived raw outputs |
 | `equivalence_rq2.py` | RQ2 robustness: scenario-matched paired gap, bootstrap CI, TOST equivalence and margin sensitivity |
 | `failure_taxonomy.py` | Classifies every non-conformant call (enum, type, missing key, empty string, malformed JSON, timeout); reads archived results only |
 | `make_figures.py` | generates the four vector figures |
